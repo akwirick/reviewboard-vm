@@ -1,0 +1,17 @@
+---
+mepel_url:  http://repo.marinsw.net/yum/mepel/6/x86_64/mepel-release-5-12.el6.noarch.rpm
+
+ntpservers:
+  - ntp1
+  - ntp2
+
+resolve_domain: dev.marinsw.net
+
+search_servers:
+  - dev.marinsw.net 
+  - marinsoftware.com
+
+name_servers:
+  - 10.9.5.25 #PDX
+  - 10.0.5.25 #SF1
+  - 10.0.5.26 #SF2

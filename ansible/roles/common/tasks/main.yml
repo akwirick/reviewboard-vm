@@ -1,0 +1,34 @@
+---
+# The playbook for common tasks
+
+- name: Install some essential packages
+  yum:  name={{ item }} state=present
+  with_items:
+    - subversion
+    - git
+    - vim-common
+    - libselinux-python 
+
+- name: Add the Marin MEPEL repository for additional packages
+  yum:  name={{ mepel_url }} 
+        state=present
+        disable_gpg_check=yes
+
+- name: Add the fedora EPEL repository
+  copy: src=epel.repo dest=/etc/yum.repos.d/epel.repo
+
+- name: Use the provided EPEL GPG key
+  copy: src=RPM-GPG-KEY-EPEL-6 dest=/etc/pki/rpm-gpg
+
+- name: Install ntp
+  yum:  name=ntp state=present
+
+- name: Configure NTP from template
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  notify: restart ntp
+
+- name: Create the hosts file for all machines
+  template: src=hosts.j2 dest=/etc/hosts
+
+- name: Create the resolv.conf file to find local servers
+  template: src=resolv.conf.j2 dest=/etc/resolv.conf

@@ -1,0 +1,30 @@
+---
+- name: Copy the MariaDB REPO file to the yum repositories
+  copy: src=MariaDB.repo dest=/etc/yum.repos.d/MariaDB.repo
+
+- name: Install the MariaDB Repository
+  yum: state=present name={{ item }}
+  with_items:
+    - MySQL-python
+    - MariaDB-server
+    - MariaDB-client
+
+- name: Copy the my.conf configuration
+  template: src=my.conf.j2 dest=/etc/my.conf
+
+- name: Create the mysql user
+  user: name=mysql group=mysql state=present createhome=no
+
+- name: insert iptables rule
+  lineinfile: dest=/etc/sysconfig/iptables-config state=present regexp="{{ mysql_port }}"
+              insertafter="^:OUTPUT " line="-A INPUT -p tcp  --dport {{ mysql_port }} -j  ACCEPT"
+  notify: restart iptables
+
+- name: Start mysql
+  service: name=mysql state=started
+
+- name: Create the Marin Databases
+  mysql_db: name={{ dbname }} state=present
+
+- name: Create the Marin DB User
+  mysql_user: name={{ dbuser }} password={{ upassword }} priv='{{ dbname }}.*:ALL' host='%' state=present

@@ -1,0 +1,10 @@
+---
+# These variables are available to dbservers
+mysqlservice: mysqld
+mysql_port: 3306
+
+# max_allowed_packet: 512M
+# thread_stack: 256k
+dbuser:  rb
+dbname:  rb
+upassword:  guysguysguys

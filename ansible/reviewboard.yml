@@ -1,0 +1,11 @@
+---
+# Main playbook for installing RB 2.0.x
+
+- name: Provision common base configuration to all hosts
+  hosts: all
+  gather_facts: yes
+  sudo: yes
+  roles:
+    - common
+    - mariadb
+    - reviewboard

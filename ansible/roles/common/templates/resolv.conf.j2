@@ -1,0 +1,8 @@
+#Generated with Ansible
+
+domain {{ resolve_domain }}
+search {% for server in search_servers %}{{ server }} {% endfor %}
+
+{% for server in name_servers %}
+nameserver {{ server }}
+{% endfor %}

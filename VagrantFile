@@ -1,0 +1,18 @@
+Vagrant.configure("2") do |config|
+  config.vm.define "reviewboard" do |d|
+    # Using a Centos64 box for dev
+    d.vm.box = "centos65"
+    # Allocate ram for virtualbox
+    d.vm.provider :virtualbox do |v|
+      v.name = "reviewboard"
+      v.customize ["modifyvm", :id, "--memory", "4096"]
+    end
+    d.vm.hostname = "marin-app"
+    d.vm.network :forwarded_port, guest: 80, host: 8080
+    d.vm.network :private_network, ip: "10.13.37.101"
+  end
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "ansible/reviewboard.yml"
+  end
+  config.vm.synced_folder "rb/", "/opt/reviewboard/"
+end

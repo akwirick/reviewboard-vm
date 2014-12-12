@@ -1,0 +1,27 @@
+---
+# Setup a reviewboard installation
+
+- name: Install python setuptools and development headers
+  yum:  name={{ item }} state=present
+  with_items:
+    - python-setuptools
+    - python-devel
+    - memcached
+    - patch
+    - python-subvertpy
+
+- name: Install python packages
+  easy_install: name={{ item }}
+  with_items:
+    - pip
+    - python-memcached
+    - mysql-python
+    - ReviewBoard
+    - nose
+    - Sphinx
+
+- name: Create file structure for the new site
+  file: path=/var/www/{{ item }} state=directory owner="www-data"
+  with_items:
+    - htdocs/media/uploaded
+    - data
