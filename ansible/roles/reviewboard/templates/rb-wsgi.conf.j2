@@ -1,0 +1,36 @@
+upstream rb_uwsgi {
+    server 127.0.0.1:{{uwsgi_port}};
+}
+
+server {
+    listen {{web_server_port}};
+    server_name localhost;
+    
+    access_log {{site_root}}/logs/nginx_access_log;
+    error_log {{site_root}}/logs/nginx_error_log;
+
+    location / {
+        uwsgi_pass rb_uwsgi;
+        include uwsgi_params;
+        uwsgi_param X-Real-IP $remote_addr;
+        uwsgi_param Host $http_host;
+        
+    }
+
+    location /media {
+        alias {{site_root}}/htdocs/media;
+        if ($query_string) {
+            expires max;
+        }
+    }
+    location /static {
+        alias {{site_root}}/htdocs/static;
+        if ($query_string) {
+            expires max;
+        }
+    }
+    location /errordocs {
+        alias {{site_root}}/htdocs/errordocs;
+        expires 30d;
+    }
+}

@@ -9,11 +9,6 @@
     - vim-common
     - libselinux-python 
 
-- name: Add the Marin MEPEL repository for additional packages
-  yum:  name={{ mepel_url }} 
-        state=present
-        disable_gpg_check=yes
-
 - name: Add the fedora EPEL repository
   copy: src=epel.repo dest=/etc/yum.repos.d/epel.repo
 

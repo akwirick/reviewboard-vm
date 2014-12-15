@@ -23,8 +23,8 @@
 - name: Start mysql
   service: name=mysql state=started
 
-- name: Create the Marin Databases
-  mysql_db: name={{ dbname }} state=present
-
 - name: Create the Marin DB User
-  mysql_user: name={{ dbuser }} password={{ upassword }} priv='{{ dbname }}.*:ALL' host='%' state=present
+  mysql_user: name={{ db_user }} password={{ db_password }} priv=*.*:ALL state=present
+
+- name: Create the Marin Databases
+  mysql_db: name={{ db_name }} state=present

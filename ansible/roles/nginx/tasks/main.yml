@@ -1,0 +1,12 @@
+---
+- name: Copy the nginx repo file to the yum repositories
+  copy: src=nginx.repo dest=/etc/yum.repos.d/nginx.repo
+
+- name: Install nginx
+  yum:  name=nginx state=present
+
+- name: Remove default configurations
+  file: path=/etc/nginx/conf.d/{{ item }} state=absent
+  with_items:
+    - example_ssl.conf
+    - default.conf

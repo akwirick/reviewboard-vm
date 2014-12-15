@@ -1,0 +1,1 @@
+sudo uwsgi --http-socket 127.0.0.1:8005 --processes 2 --harakiri 60 --master --post-buffering 4096 --wsgi-file /opt/rb/htdocs/reviewboard.wsgi

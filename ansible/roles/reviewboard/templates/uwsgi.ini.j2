@@ -1,0 +1,9 @@
+[uwsgi]
+socket = 127.0.0.1:{{uwsgi_port}}
+chdir = {{site_root}}
+wsgi-file = htdocs/reviewboard.wsgi
+processes = 4
+threads = 2
+stats = 127.0.0.1:9191
+uid = {{rb_user}}
+gid = {{rb_group}}

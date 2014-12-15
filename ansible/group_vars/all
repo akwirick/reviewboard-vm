@@ -1,0 +1,26 @@
+---
+
+admin_user: admin
+admin_password: wawptw
+admin_email: awirick@marinsoftware.com
+domain_name: localhost
+
+db_type: mysql
+db_name: rb
+db_user: rb
+db_password: guysguysguys
+db_host: localhost
+
+web_server_port: 80
+web_server: apache  # Fake it til you make it
+python_loader: wsgi
+
+cache_type: memcached
+cache_info: localhost:11211
+
+site_root: /opt/rb
+uwsgi_port: 8005
+
+
+rb_user: rb
+rb_group: rb

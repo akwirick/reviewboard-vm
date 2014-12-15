@@ -4,8 +4,10 @@
 - name: Provision common base configuration to all hosts
   hosts: all
   gather_facts: yes
+  user: vagrant
   sudo: yes
   roles:
     - common
     - mariadb
+    - nginx
     - reviewboard

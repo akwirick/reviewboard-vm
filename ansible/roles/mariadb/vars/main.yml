@@ -5,6 +5,3 @@ mysql_port: 3306
 
 # max_allowed_packet: 512M
 # thread_stack: 256k
-dbuser:  rb
-dbname:  rb
-upassword:  guysguysguys

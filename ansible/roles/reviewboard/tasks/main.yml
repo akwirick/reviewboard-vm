@@ -1,7 +1,7 @@
 ---
 # Setup a reviewboard installation
 
-- name: Install python setuptools and development headers
+- name: Install required yum packages for python and memcached
   yum:  name={{ item }} state=present
   with_items:
     - python-setuptools
@@ -9,6 +9,20 @@
     - memcached
     - patch
     - python-subvertpy
+    - openldap-devel
+
+
+- name: Insert iptables rule for apache httpd
+  lineinfile: dest=/etc/sysconfig/iptables-config create=yes state=present regexp="{{ web_server_port }}" insertafter="^:OUTPUT "
+              line="-A INPUT -p tcp  --dport {{ web_server_port }} -j  ACCEPT"
+  notify: restart iptables
+
+- name: Ensure apache mysql and memcached are started
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - nginx
+    - memcached
+    - mysql
 
 - name: Install python packages
   easy_install: name={{ item }}
@@ -19,9 +33,45 @@
     - ReviewBoard
     - nose
     - Sphinx
+    - uwsgi
+    - python-ldap
 
-- name: Create file structure for the new site
-  file: path=/var/www/{{ item }} state=directory owner="www-data"
+- name: Create the rb user group
+  group: name={{rb_group}} state=present
+
+- name: Create the rb user
+  user: name={{rb_user}} comment="Reviewboard App User" uid=1337 group={{rb_group}}
+
+- name: Run ReviewBoard Installer
+  command: rb-site install {{site_root}}
+         --noinput
+         --domain-name={{domain_name}}
+         --db-type={{db_type}}
+         --db-name={{db_name}}
+         --db-host={{db_host}}
+         --db-user={{db_user}}
+         --db-pass={{db_password}}
+         --cache-type={{cache_type}}
+         --cache-info={{cache_info}}
+         --python-loader={{python_loader}}
+         --admin-user={{admin_user}}
+         --admin-password={{admin_password}}
+         --admin-email={{admin_email}}
+         --web-server-type={{web_server}}
+         --web-server-port={{web_server_port}}
+         creates={{site_root}}
+
+- name: Setup the site paths for apache ownership
+  file: path={{site_root}}/{{ item }} owner={{rb_user}} group={{rb_group}} mode=0775 state=directory recurse=yes
   with_items:
-    - htdocs/media/uploaded
     - data
+    - htdocs/media/ext
+    - htdocs/static/ext
+
+- name: Copy the server config to nginx
+  template: src=rb-wsgi.conf.j2 dest=/etc/nginx/conf.d/rb-wsgi.conf
+  notify: restart nginx
+
+- name: Copy the uwsgi.ini to the install configuration
+  template: src=uwsgi.ini.j2 dest={{site_root}}/conf/uwsgi.ini
+
